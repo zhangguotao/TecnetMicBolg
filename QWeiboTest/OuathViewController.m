@@ -49,7 +49,7 @@
     
 }
 /*
- http://edaijia.cn/#access_token=216358109659f07936e1ba47f3e37bd7&expires_in=604800&openid=C4E977D616F12550D6DF1DF3D554EBEA&openkey=3AB1F01E08E9FE44DA04A4789BF9B9B8&refresh_token=517073e6c4f118e786902134db281aca&name=testweibo2009&nick=%E5%BC%A0%E5%9B%BD%E6%B6%9B
+edaijia.cn#access_token=216358109659f07936e1ba47f3e37bd7&expires_in=604800&openid=C4E977D616F12550D6DF1DF3D554EBEA&openkey=3AB1F01E08E9FE44DA04A4789BF9B9B8&refresh_token=517073e6c4f118e786902134db281aca&name=testweibo2009&nick=%E5%BC%A0%E5%9B%BD%E6%B6%9B
 */
 
 #pragma mark -UIWebViewDelegate
@@ -61,6 +61,7 @@
     NSRange  range = [geturl rangeOfString:@"#"];
     if (range.length > 0) {
         [self saveAccessToken:geturl];
+        [self.navigationController popToRootViewControllerAnimated:YES];
         return NO;
     }
     return YES;
@@ -74,10 +75,21 @@
 - (void)saveAccessToken:(NSString *)urlString
 {
     NSArray  *strArray = [urlString componentsSeparatedByString:@"#"];
+    //NSLog(@"url is %@",[strArray objectAtIndex:1]);
     /* cut any import key to save */
     NSString *access_token = [[strArray objectAtIndex:1]
                               substringWithRange:NSMakeRange(13,32)];
-    NSLog(@"access_token is %@",access_token);
+    NSString *openid = [[strArray objectAtIndex:1]
+                        substringWithRange:NSMakeRange(71,32)];
+    NSString *refresh_token = [[strArray objectAtIndex:1]
+                               substringWithRange:NSMakeRange(159,32)];
+    /* save access_token and openid to userdefault  */
+    
+    NSUserDefaults *userdefault = [NSUserDefaults standardUserDefaults];
+    [userdefault setValue:access_token forKey:@"ACCESS_TOKEN"];
+    [userdefault setValue:openid forKey:@"OPENID"];
+    [userdefault setValue:refresh_token forKey:@"REFRESH_TOKEN"];
+    [userdefault synchronize];
 }
 
 - (void)dealloc
