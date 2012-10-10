@@ -68,7 +68,7 @@
 
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error
 {
-    Alert(@"错误", @"请检查您的网络连接!");
+     Alert(@"错误", @"请检查您的网络连接!");
 }
 
 - (void)saveAccessToken:(NSString *)urlString
