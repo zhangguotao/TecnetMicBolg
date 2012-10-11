@@ -8,6 +8,7 @@
 
 #import "ViewController.h"
 #import "OuathViewController.h"
+#import "SinaOuathViewController.h"
 #import "MicBolg.h"
 
 @interface ViewController ()
@@ -35,15 +36,23 @@
     Tbutton.backgroundColor = [UIColor clearColor];
     [Tbutton setTitle:@"分享到腾讯微博" forState:UIControlStateNormal];
     [Tbutton addTarget:self
-                action:@selector(doShare:)
+                action:@selector(doShareToTecent:)
       forControlEvents:UIControlEventTouchUpInside];
-    
     [self.view addSubview:Tbutton];
+    /*  share to sina button  */
+    UIButton  *Sbutton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    Sbutton.frame = CGRectMake(10, 130, 300, 50);
+    Sbutton.backgroundColor = [UIColor clearColor];
+    [Sbutton setTitle:@"分享到新浪微博" forState:UIControlStateNormal];
+    [Sbutton addTarget:self
+                action:@selector(doShareToSina:)
+      forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:Sbutton];
 }
 
 #pragma mark -UIButton Selecter
 
-- (void)doShare:(id)sender
+- (void)doShareToTecent:(id)sender
 {
     /* check out if ouathed */
     NSUserDefaults  *userdefault = [NSUserDefaults standardUserDefaults];
@@ -60,6 +69,24 @@
         /* jump to ouath page */
         OuathViewController  *viewController = [[[OuathViewController alloc] init] autorelease];
         [self.navigationController pushViewController:viewController animated:YES];
+    }
+    [userdefault synchronize];
+}
+
+- (void)doShareToSina:(id)sender
+{
+    /* check out if the access_token  */
+    NSUserDefaults  *userdefault = [NSUserDefaults standardUserDefaults];
+    if ([userdefault valueForKey:@"SINAACCESSTOKEN"]) {
+        NSLog(@"access_token is %@",[userdefault valueForKey:@"SINAACCESSTOKEN"]);
+        [[MicBolg shareInstance] postSinaMicblog:self
+                                 withAccessToken:[userdefault valueForKey:@"SINAACCESSTOKEN"]
+                                     withSuccess:@selector(doSuccess:)
+                                     withFailure:@selector(doFailure:)];
+    } else {
+        SinaOuathViewController  *sinaOuath = [[SinaOuathViewController alloc] init];
+        [self.navigationController pushViewController:sinaOuath animated:YES];
+        [sinaOuath release];
     }
     [userdefault synchronize];
 }

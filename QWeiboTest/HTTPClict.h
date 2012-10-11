@@ -11,6 +11,6 @@
 
 @interface HTTPClict : AFHTTPClient
 
-+ (HTTPClict *)shareCliect;
++ (HTTPClict *)shareCliect:(NSString *)type;
 
 @end

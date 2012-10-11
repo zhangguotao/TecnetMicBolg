@@ -6,23 +6,33 @@
 //  Copyright (c) 2012年 张国涛. All rights reserved.
 //
 #define BASEURL @"https://open.t.qq.com/api/t/add"
-#define APPKEY  @"801193272"
-#define ACCESS_TOKEN @"216358109659f07936e1ba47f3e37bd7"
-#define OPEN_ID @"C4E977D616F12550D6DF1DF3D554EBEA"
 
+#define SINAOUATHURL @"https://api.weibo.com/oauth2/access_token"
+
+#define SINAURL @"https://api.weibo.com/2/statuses/update.json"
+
+#define APPKEY  @"801193272"
 
 #import "HTTPClict.h"
 #import "AFNetworking.h"
 
 @implementation HTTPClict
 
-+ (HTTPClict *)shareCliect
++ (HTTPClict *)shareCliect:(NSString*)type
 {
     static HTTPClict *_shareInstance = nil;
     static dispatch_once_t  onceToken;
     dispatch_once(&onceToken, ^{
-        _shareInstance = [[HTTPClict alloc] initWithBaseURL:
-                          [NSURL URLWithString:BASEURL]];
+        if ([type isEqualToString:@"tecent"]) {
+            _shareInstance = [[HTTPClict alloc] initWithBaseURL:
+                              [NSURL URLWithString:BASEURL]];
+        } else if ([type isEqualToString:@"sinaOuath"]){
+            _shareInstance = [[HTTPClict alloc] initWithBaseURL:
+                              [NSURL URLWithString:SINAOUATHURL]];
+        } else if ([type isEqualToString:@"sina"]) {
+            _shareInstance = [[HTTPClict alloc] initWithBaseURL:
+                              [NSURL URLWithString:SINAURL]];
+        }
     });
     return _shareInstance;
 }
@@ -41,19 +51,6 @@
                                       path:(NSString *)path
                                 parameters:(NSDictionary *)parameters
 {
-    
-    if (parameters) {
-        if ([method isEqualToString:@"GET"] || [method isEqualToString:@"POST"]){
-            
-			NSMutableDictionary *mutableParameters = [parameters mutableCopy];
-			[mutableParameters setValue:@"801193272" forKey:@"oauth_consumer_key"];
-			[mutableParameters setValue:@"123.108.212.196" forKey:@"clientip"];
-			[mutableParameters setValue:@"2.a"       forKey:@"oauth_version"];
-			[mutableParameters setValue:@"all"       forKey:@"scope"];
-			parameters = [NSDictionary dictionaryWithDictionary:mutableParameters];
-			[mutableParameters release];
-       }
-    }
     NSMutableURLRequest *request = [super requestWithMethod:@"POST"
 													   path:path
 												 parameters:parameters];

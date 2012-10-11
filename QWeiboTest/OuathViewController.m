@@ -48,9 +48,6 @@
     [request  release];
     
 }
-/*
-edaijia.cn#access_token=216358109659f07936e1ba47f3e37bd7&expires_in=604800&openid=C4E977D616F12550D6DF1DF3D554EBEA&openkey=3AB1F01E08E9FE44DA04A4789BF9B9B8&refresh_token=517073e6c4f118e786902134db281aca&name=testweibo2009&nick=%E5%BC%A0%E5%9B%BD%E6%B6%9B
-*/
 
 #pragma mark -UIWebViewDelegate
 
