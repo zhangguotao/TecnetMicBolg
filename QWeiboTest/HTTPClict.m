@@ -18,21 +18,36 @@
 
 @implementation HTTPClict
 
-+ (HTTPClict *)shareCliect:(NSString*)type
++ (HTTPClict *)shareCliect
 {
     static HTTPClict *_shareInstance = nil;
     static dispatch_once_t  onceToken;
     dispatch_once(&onceToken, ^{
-        if ([type isEqualToString:@"tecent"]) {
             _shareInstance = [[HTTPClict alloc] initWithBaseURL:
                               [NSURL URLWithString:BASEURL]];
-        } else if ([type isEqualToString:@"sinaOuath"]){
-            _shareInstance = [[HTTPClict alloc] initWithBaseURL:
-                              [NSURL URLWithString:SINAOUATHURL]];
-        } else if ([type isEqualToString:@"sina"]) {
-            _shareInstance = [[HTTPClict alloc] initWithBaseURL:
-                              [NSURL URLWithString:SINAURL]];
-        }
+      });
+    return _shareInstance;
+}
+
+
++ (HTTPClict *)shareCliectSinaOuath
+{
+    static HTTPClict *_shareInstance = nil;
+    static dispatch_once_t  onceToken;
+    dispatch_once(&onceToken, ^{
+        _shareInstance = [[HTTPClict alloc] initWithBaseURL:
+                          [NSURL URLWithString:SINAOUATHURL]];
+    });
+    return _shareInstance;
+}
+
++ (HTTPClict *)shareCliectSinaPost
+{
+    static HTTPClict *_shareInstance = nil;
+    static dispatch_once_t  onceToken;
+    dispatch_once(&onceToken, ^{
+        _shareInstance = [[HTTPClict alloc] initWithBaseURL:
+                          [NSURL URLWithString:SINAURL]];
     });
     return _shareInstance;
 }

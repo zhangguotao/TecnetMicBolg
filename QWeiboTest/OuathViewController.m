@@ -15,6 +15,7 @@
 @property (copy   , nonatomic) NSString   *urlstr;
 
 - (void)saveAccessToken:(NSString *)urlString;
+- (NSString *)getExpiresTimes:(NSString *)expirestime;
 
 @end
 
@@ -54,6 +55,7 @@
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType
 {
     NSString   *geturl = request.URL.absoluteString;
+    NSLog(@"get url is %@",geturl);
     /*  checking if get the access_token */
     NSRange  range = [geturl rangeOfString:@"#"];
     if (range.length > 0) {
@@ -76,6 +78,8 @@
     /* cut any import key to save */
     NSString *access_token = [[strArray objectAtIndex:1]
                               substringWithRange:NSMakeRange(13,32)];
+    NSString *expires_in =  [[strArray objectAtIndex:1]
+                             substringWithRange:NSMakeRange(57,6)];
     NSString *openid = [[strArray objectAtIndex:1]
                         substringWithRange:NSMakeRange(71,32)];
     NSString *refresh_token = [[strArray objectAtIndex:1]
@@ -84,9 +88,18 @@
     
     NSUserDefaults *userdefault = [NSUserDefaults standardUserDefaults];
     [userdefault setValue:access_token forKey:@"ACCESS_TOKEN"];
+    [userdefault setValue:[self getExpiresTimes:expires_in] forKey:@"EXPIRESIN"];
     [userdefault setValue:openid forKey:@"OPENID"];
     [userdefault setValue:refresh_token forKey:@"REFRESH_TOKEN"];
     [userdefault synchronize];
+}
+
+//  count expires_in time
+- (NSString *)getExpiresTimes:(NSString *)expirestime
+{
+    double  expire = [expirestime doubleValue];
+    id  expirestr = [[NSDate date] dateByAddingTimeInterval:expire];
+    return [NSString stringWithFormat:@"%@",expirestr];
 }
 
 - (void)dealloc

@@ -18,6 +18,8 @@
 @property (strong , nonatomic) UIWebView  *webview;
 @property (copy   , nonatomic) NSString   *urlstr;
 
+- (NSString *)getExpiresTimes:(NSString *)expirestime;
+
 @end
 
 @implementation SinaOuathViewController
@@ -72,11 +74,24 @@
     NSLog(@"接收到的数据是:%@",sender);
     NSDictionary  *dictionary = [sender objectFromJSONString];
     NSString   *access_token = [dictionary valueForKey:@"access_token"];
+    NSString   *expires_in = [dictionary valueForKey:@"expires_in"];
     /* save sina access_token to key */
     NSUserDefaults  *userdefault = [NSUserDefaults standardUserDefaults];
     [userdefault setValue:access_token forKey:@"SINAACCESSTOKEN"];
+    [userdefault setValue:[self getExpiresTimes:expires_in] forKey:@"SINAEXPIRESIN"];
     [userdefault synchronize];
+    [self.navigationController popViewControllerAnimated:YES];
 }
+
+
+//  count expires_in time
+- (NSString *)getExpiresTimes:(NSString *)expirestime
+{
+    double  expire = [expirestime doubleValue];
+    id  expirestr = [[NSDate date] dateByAddingTimeInterval:expire];
+    return [NSString stringWithFormat:@"%@",expirestr];
+}
+
 
 - (void)doFailure:(id)sender
 {

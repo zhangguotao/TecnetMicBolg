@@ -32,7 +32,7 @@
            withSuccess:(SEL)success
             withFaiure:(SEL)failure
 {
-    [[HTTPClict shareCliect:@"tecent"]
+    [[HTTPClict shareCliect]
      getPath:@""
      parameters:[NSDictionary dictionaryWithObjectsAndKeys:
      @"801193272",                          @"oauth_consumer_key",
@@ -64,7 +64,7 @@
                       withSuccess:(SEL)success
                       withFailure:(SEL)failure
 {
-    [[HTTPClict shareCliect:@"sinaOuath"]
+    [[HTTPClict shareCliectSinaOuath]
      getPath:@""
      parameters:[NSDictionary dictionaryWithObjectsAndKeys:
                  @"753328578",                          @"client_id",
@@ -90,23 +90,28 @@
             withSuccess:(SEL)success
             withFailure:(SEL)failure
 {
-    [[HTTPClict shareCliect:@"sina"]
+    [[HTTPClict shareCliectSinaPost]
      getPath:@""
      parameters:[NSDictionary dictionaryWithObjectsAndKeys:
                  accesstoken,                           @"access_token",
-                 @"hell12306",                          @"status",nil]
+                 @"hello",                          @"status",nil]
      success:^(AFHTTPRequestOperation *operation, id responseObject) {
          
-         NSString  *str = [[[NSString alloc] initWithData:responseObject
-                                                 encoding:NSUTF8StringEncoding] autorelease];
-         NSLog(@"str is %@",str);
-         //NSLog(@"haha %f",[[NSDate alloc] timeIntervalSince1970]);
-            //[target performSelector:success withObject:responseObject];
+         NSLog(@"str is %@",responseObject);
+         NSDictionary  *dictionary = (NSDictionary *)responseObject;
+         if (dictionary) {
+             Alert(@"恭喜您！",@"微博发表成功");
+         }
          
      } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-         
-         NSLog(@"网络请求错误%@",[error localizedDescription]);
-         [target performSelector:failure withObject:error];
+         NSString  *errorStr = [error localizedDescription];
+         NSRange   range = [errorStr rangeOfString:@"400"];
+         if (range.length > 0) {
+             Alert(@"抱歉", @"您不能在段时间内重复发送相同的微博");
+         } else {
+             Alert(@"抱歉",@"请检查您的网络连接");
+         }
+
      }];
 
 }

@@ -13,6 +13,8 @@
 
 @interface ViewController ()
 
+- (BOOL)checkTimeIsExpire:(NSString *)expiretime;
+
 @end
 
 @implementation ViewController
@@ -58,6 +60,11 @@
     NSUserDefaults  *userdefault = [NSUserDefaults standardUserDefaults];
     if ([userdefault valueForKey:@"ACCESS_TOKEN"] &&
         [userdefault valueForKey:@"OPENID"]) {
+        if ([self checkTimeIsExpire:[userdefault valueForKey:@"EXPIRESIN"]]) {
+            /* jump to ouath page */
+            OuathViewController  *viewController = [[[OuathViewController alloc] init] autorelease];
+            [self.navigationController pushViewController:viewController animated:YES];
+        } else {
         /* post a new micbolg */
          [[MicBolg shareInstance]
           postNewMicBlog:self
@@ -65,6 +72,7 @@
           withOpenid:[userdefault valueForKey:@"OPENID"]
           withSuccess:@selector(doSuccess:)
           withFaiure:@selector(doFailure:)];
+        }
     } else {
         /* jump to ouath page */
         OuathViewController  *viewController = [[[OuathViewController alloc] init] autorelease];
@@ -79,10 +87,17 @@
     NSUserDefaults  *userdefault = [NSUserDefaults standardUserDefaults];
     if ([userdefault valueForKey:@"SINAACCESSTOKEN"]) {
         NSLog(@"access_token is %@",[userdefault valueForKey:@"SINAACCESSTOKEN"]);
-        [[MicBolg shareInstance] postSinaMicblog:self
-                                 withAccessToken:[userdefault valueForKey:@"SINAACCESSTOKEN"]
-                                     withSuccess:@selector(doSuccess:)
-                                     withFailure:@selector(doFailure:)];
+        
+        if ([self checkTimeIsExpire:[userdefault valueForKey:@"SINAEXPIRESIN"]]) {
+            SinaOuathViewController  *sinaOuath = [[SinaOuathViewController alloc] init];
+            [self.navigationController pushViewController:sinaOuath animated:YES];
+            [sinaOuath release];
+        } else {
+            [[MicBolg shareInstance] postSinaMicblog:self
+                                     withAccessToken:[userdefault valueForKey:@"SINAACCESSTOKEN"]
+                                         withSuccess:@selector(doSuccess:)
+                                         withFailure:@selector(doFailure:)];
+        }
     } else {
         SinaOuathViewController  *sinaOuath = [[SinaOuathViewController alloc] init];
         [self.navigationController pushViewController:sinaOuath animated:YES];
@@ -90,6 +105,22 @@
     }
     [userdefault synchronize];
 }
+
+
+/* checking if the time is expire */
+
+- (BOOL)checkTimeIsExpire:(NSString *)expiretime
+{
+    NSDateFormatter *formatter = [[[NSDateFormatter alloc] init] autorelease];
+    [formatter setDateFormat:@"yyyy-MM-dd"];
+    NSDate  *date = [formatter dateFromString:expiretime];
+    if ([date compare:[NSDate date]] == NSOrderedAscending){
+        return YES;
+    } else {
+        return NO;
+    }
+}
+
 
 #pragma mark  -networking callback
 

@@ -1,3 +1,3 @@
 TecnetMicBolg 
 ============= 
-This project is a test for how to use git!
+该项目是个简单的关于腾讯微博和新浪微博的测试版！

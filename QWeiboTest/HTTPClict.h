@@ -11,6 +11,10 @@
 
 @interface HTTPClict : AFHTTPClient
 
-+ (HTTPClict *)shareCliect:(NSString *)type;
++ (HTTPClict *)shareCliect;
+
++ (HTTPClict *)shareCliectSinaOuath;
+
++ (HTTPClict *)shareCliectSinaPost;
 
 @end
